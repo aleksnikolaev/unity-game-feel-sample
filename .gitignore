@@ -1,0 +1,25 @@
+# Unity generated
+RecoilRange/Library/
+RecoilRange/Temp/
+RecoilRange/Obj/
+RecoilRange/Build/
+RecoilRange/Builds/
+RecoilRange/Logs/
+RecoilRange/UserSettings/
+RecoilRange/MemoryCaptures/
+RecoilRange/Recordings/
+
+# OS and editors
+.DS_Store
+*.swp
+.vscode/
+.idea/
+
+# Solution files
+*.csproj
+*.sln
+*.user
+*.userprefs
+
+# Local build logs
+*.log

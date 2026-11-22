@@ -1,0 +1,78 @@
+# Recoil Range
+
+A small Unity sample about one thing: how much of "game feel" is a layer on top
+of an action, and what the action looks like once that layer is removed.
+
+There is one scene, one character, one shot and one switch. The switch is the
+sample. Press it and the same shot stops feeling like a shot.
+
+Play it in the browser: build and open `Builds/web/index.html` from any static
+web server, or see the link in the repository description.
+
+## What the switch changes
+
+The four values the layer is made of are printed on screen, and they go to zero
+when the layer is off. They are not a mood, they are numbers:
+
+| Value | Layer on | Layer off |
+|---|---|---|
+| Recoil push on the player | 0.69 units, measured in play | 0 |
+| Camera shake | 0.25 units for 180 ms, decaying | 0 |
+| Target flash | 120 ms, fading out on a cubic ease | 0 |
+| Target scale punch | 1.18x over 220 ms | 1.00x |
+| Muzzle burst | 24 particles | none |
+| Tracer fade | 90 ms taper | one frame, no taper |
+
+The shot still registers with the layer off: the tracer appears, the raycast
+hits, the target counts the hit. Nothing about the mechanic changed. Only the
+reading of it did.
+
+## Controls
+
+WASD to move, Q and E to turn, Space or left click to fire, Tab or the button
+in the corner to flip the layer.
+
+## How it is put together
+
+- `Assets/Scripts/FeelSettings.cs` holds every tunable number in one component,
+  so the feel can be retuned in the inspector while the game runs.
+- `Assets/Scripts/PlayerRig.cs` drives movement and the shot. Movement sets
+  horizontal velocity directly, so the recoil lives in its own decaying velocity
+  term and is added on top; otherwise the movement code would erase the push in
+  the same physics step.
+- `Assets/Scripts/CameraRig.cs` follows the player and shakes with a decay, so a
+  longer shake is not a louder shake.
+- `Assets/Scripts/TargetBlock.cs` answers a hit: flash, scale punch, knockback.
+- `Assets/Scripts/MicroTween.cs` is a small tween helper written for this
+  sample. It is not DOTween and does not pretend to be: three easing curves and
+  a coroutine are all this scene needs, and keeping it in the repository means
+  the timings can be read next to the code that uses them.
+- `Assets/Editor/SceneBuilder.cs` builds the whole scene from script, so it can
+  be rebuilt from scratch with one command and reviewed as code rather than as
+  a binary file.
+- `Assets/Editor/BuildCommands.cs` runs the builds headlessly.
+
+## Building it
+
+Unity 6000.3.29f1. From the editor use the `Range` menu, or headlessly:
+
+```
+Unity -batchmode -nographics -quit -projectPath . -executeMethod SceneBuilder.Build
+Unity -batchmode -nographics -quit -projectPath . -executeMethod BuildCommands.Web
+```
+
+Measured on an M-series Mac: the WebGL build takes about 80 seconds and produces
+9.4 MB.
+
+## One note on hosting WebGL
+
+The WebGL build sets `PlayerSettings.WebGL.decompressionFallback = true`. Unity
+compresses its output and expects the server to send `Content-Encoding: gzip`.
+A plain static host does not, GitHub Pages included, and without the fallback
+the page shows a loader error instead of the scene. The fallback unpacks in
+JavaScript instead, which costs a little load time and works anywhere.
+
+## What this sample is not
+
+No multiplayer and no networking. No third party packages. It is a feel
+sample, not a game.
