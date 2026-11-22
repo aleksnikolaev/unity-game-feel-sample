@@ -6,8 +6,10 @@ of an action, and what the action looks like once that layer is removed.
 There is one scene, one character, one shot and one switch. The switch is the
 sample. Press it and the same shot stops feeling like a shot.
 
-Play it in the browser: build and open `Builds/web/index.html` from any static
-web server, or see the link in the repository description.
+Play it in the browser: the built player lives in `docs/`, which is what GitHub
+Pages serves, so the page for this repository is the sample itself. To run it
+locally, serve that folder with any static web server and open it; opening the
+file directly from disk will not work, a browser blocks the fetches.
 
 ## What the switch changes
 
@@ -61,8 +63,9 @@ Unity -batchmode -nographics -quit -projectPath . -executeMethod SceneBuilder.Bu
 Unity -batchmode -nographics -quit -projectPath . -executeMethod BuildCommands.Web
 ```
 
-Measured on an M-series Mac: the WebGL build takes about 80 seconds and produces
-9.4 MB.
+Run from the `RecoilRange` folder. The WebGL command writes straight into
+`docs/`. Measured on an M-series Mac: that build takes about 80 seconds and
+produces 9.4 MB.
 
 ## One note on hosting WebGL
 

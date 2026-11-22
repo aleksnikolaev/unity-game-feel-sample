@@ -18,7 +18,7 @@ public static class BuildCommands
 		PlayerSettings.WebGL.decompressionFallback = true;
 		PlayerSettings.WebGL.compressionFormat = WebGLCompressionFormat.Gzip;
 		PlayerSettings.runInBackground = true;
-		Run(BuildTarget.WebGL, BuildTargetGroup.WebGL, "Builds/web");
+		Run(BuildTarget.WebGL, BuildTargetGroup.WebGL, "../docs");
 	}
 
 	[MenuItem("Range/Build Mac")]
