@@ -16,6 +16,9 @@ public static class BuildCommands
 	public static void Web()
 	{
 		PlayerSettings.WebGL.decompressionFallback = true;
+		// Our own page: no default template bar, a progress line and an honest
+		// note about the download size while it loads.
+		PlayerSettings.WebGL.template = "PROJECT:Clean";
 		PlayerSettings.WebGL.compressionFormat = WebGLCompressionFormat.Gzip;
 		PlayerSettings.runInBackground = true;
 		Run(BuildTarget.WebGL, BuildTargetGroup.WebGL, "../docs");

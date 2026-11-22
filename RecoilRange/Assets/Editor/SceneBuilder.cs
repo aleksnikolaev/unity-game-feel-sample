@@ -27,6 +27,8 @@ public static class SceneBuilder
 
 		GameObject settingsHolder = new GameObject("FeelSettings");
 		FeelSettings feel = settingsHolder.AddComponent<FeelSettings>();
+		ShotAudio audioRig = settingsHolder.AddComponent<ShotAudio>();
+		Hitstop hitstop = settingsHolder.AddComponent<Hitstop>();
 
 		GameObject sun = new GameObject("Sun");
 		Light light = sun.AddComponent<Light>();
@@ -54,6 +56,7 @@ public static class SceneBuilder
 		muzzle.transform.localPosition = new Vector3(0f, 0.35f, 0.75f);
 
 		ParticleSystem burst = MakeMuzzle(muzzle.transform);
+		ParticleSystem impact = MakeImpact();
 		LineRenderer tracer = MakeTracer(player.transform);
 
 		GameObject cameraObject = new GameObject("Main Camera");
@@ -71,6 +74,9 @@ public static class SceneBuilder
 		playerRig.muzzleBurst = burst;
 		playerRig.tracer = tracer;
 		playerRig.cameraRig = rig;
+		playerRig.impactBurst = impact;
+		playerRig.audioRig = audioRig;
+		playerRig.hitstop = hitstop;
 
 		Vector3[] spots = {
 			new Vector3(-4.5f, 1f, 9f),
@@ -140,6 +146,42 @@ public static class SceneBuilder
 		ParticleSystemRenderer renderer = holder.GetComponent<ParticleSystemRenderer>();
 		renderer.material = new Material(Shader.Find("Particles/Standard Unlit"));
 		renderer.material.SetColor("_Color", Color.white);
+
+		return particles;
+	}
+
+	/// <summary>Sparks at the point the shot lands, aimed back along the surface.</summary>
+	static ParticleSystem MakeImpact()
+	{
+		GameObject holder = new GameObject("ImpactBurst");
+		ParticleSystem particles = holder.AddComponent<ParticleSystem>();
+
+		var main = particles.main;
+		main.duration = 1f;
+		main.loop = false;
+		main.playOnAwake = false;
+		main.startLifetime = new ParticleSystem.MinMaxCurve(0.18f, 0.45f);
+		main.startSpeed = new ParticleSystem.MinMaxCurve(3.5f, 9f);
+		main.startSize = new ParticleSystem.MinMaxCurve(0.05f, 0.14f);
+		main.startColor = new ParticleSystem.MinMaxGradient(
+			new Color(1f, 0.95f, 0.70f), new Color(1f, 0.62f, 0.25f));
+		main.gravityModifier = 0.9f;
+		main.simulationSpace = ParticleSystemSimulationSpace.World;
+
+		var emission = particles.emission;
+		emission.enabled = false;
+
+		var shape = particles.shape;
+		shape.shapeType = ParticleSystemShapeType.Cone;
+		shape.angle = 42f;
+		shape.radius = 0.04f;
+
+		var sizeOverLife = particles.sizeOverLifetime;
+		sizeOverLife.enabled = true;
+		sizeOverLife.size = new ParticleSystem.MinMaxCurve(1f, AnimationCurve.EaseInOut(0f, 1f, 1f, 0f));
+
+		ParticleSystemRenderer renderer = holder.GetComponent<ParticleSystemRenderer>();
+		renderer.material = new Material(Shader.Find("Particles/Standard Unlit"));
 
 		return particles;
 	}
@@ -221,7 +263,7 @@ public static class SceneBuilder
 		help.color = Color.white;
 		Outline helpOutline = helpObject.AddComponent<Outline>();
 		helpOutline.effectColor = new Color(0f, 0f, 0f, 0.75f);
-		helpOutline.effectDistance = new Vector2(1.3f, -1.3f);
+		helpOutline.effectDistance = new Vector2(1f, -1f);
 		RectTransform helpRect = helpObject.GetComponent<RectTransform>();
 		helpRect.anchorMin = new Vector2(0f, 0f);
 		helpRect.anchorMax = new Vector2(0f, 0f);
@@ -237,13 +279,13 @@ public static class SceneBuilder
 		panelRect.anchorMax = new Vector2(1f, 1f);
 		panelRect.pivot = new Vector2(1f, 1f);
 		panelRect.anchoredPosition = new Vector2(-24f, -88f);
-		panelRect.sizeDelta = new Vector2(640f, 34f);
+		panelRect.sizeDelta = new Vector2(790f, 34f);
 
 		GameObject numbersObject = new GameObject("Numbers", typeof(Text));
 		numbersObject.transform.SetParent(numbersPanel.transform, false);
 		Text numbers = numbersObject.GetComponent<Text>();
 		numbers.font = font;
-		numbers.fontSize = 18;
+		numbers.fontSize = 16;
 		numbers.alignment = TextAnchor.MiddleRight;
 		numbers.color = new Color(1f, 1f, 1f, 0.9f);
 		RectTransform numbersRect = numbersObject.GetComponent<RectTransform>();

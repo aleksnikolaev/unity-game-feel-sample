@@ -51,12 +51,12 @@ public class RangeUI : MonoBehaviour
 		{
 			float pushed = player != null ? player.LastRecoilUnits : 0f;
 			numbersLabel.text = string.Format(
-				"recoil {0:0.00} u   shake {1:0.00} u / {2} ms   flash {3} ms   punch {4:0.00}x / {5} ms",
-				pushed, feel.shakeAmplitude, feel.shakeMs, feel.flashMs, feel.hitPunch, feel.punchMs);
+				"recoil {0:0.00} u   shake {1:0.00} u / {2} ms   hitstop {3} ms   flash {4} ms   punch {5:0.00}x / {6} ms",
+				pushed, feel.shakeAmplitude, feel.shakeMs, feel.hitstopMs, feel.flashMs, feel.hitPunch, feel.punchMs);
 		}
 		else
 		{
-			numbersLabel.text = "recoil 0.00 u   shake 0.00 u / 0 ms   flash 0 ms   punch 1.00x / 0 ms";
+			numbersLabel.text = "recoil 0.00 u   shake 0.00 u / 0 ms   hitstop 0 ms   flash 0 ms   punch 1.00x / 0 ms";
 		}
 	}
 

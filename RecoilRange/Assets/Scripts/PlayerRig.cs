@@ -18,6 +18,9 @@ public class PlayerRig : MonoBehaviour
 	public ParticleSystem muzzleBurst;
 	public LineRenderer tracer;
 	public CameraRig cameraRig;
+	public ParticleSystem impactBurst;
+	public ShotAudio audioRig;
+	public Hitstop hitstop;
 	public LayerMask hitMask = ~0;
 
 	public float moveSpeed = 7f;
@@ -108,13 +111,19 @@ public class PlayerRig : MonoBehaviour
 		Vector3 end = from + direction * feel.range;
 
 		RaycastHit hit;
+		bool landed = false;
+		Vector3 hitPoint = Vector3.zero;
+		Vector3 hitNormal = Vector3.up;
 		if (Physics.Raycast(from, direction, out hit, feel.range, hitMask, QueryTriggerInteraction.Ignore))
 		{
 			end = hit.point;
+			hitPoint = hit.point;
+			hitNormal = hit.normal;
 			TargetBlock target = hit.collider.GetComponentInParent<TargetBlock>();
 			if (target != null)
 			{
 				target.TakeHit(direction);
+				landed = true;
 			}
 		}
 
@@ -122,8 +131,32 @@ public class PlayerRig : MonoBehaviour
 
 		if (!feel.juiceOn)
 		{
+			// The bare action: the shot happens, nothing announces it.
 			LastRecoilUnits = 0f;
 			return;
+		}
+
+		if (audioRig != null)
+		{
+			audioRig.PlayShot();
+		}
+
+		if (landed)
+		{
+			if (impactBurst != null)
+			{
+				impactBurst.transform.position = hitPoint;
+				impactBurst.transform.rotation = Quaternion.LookRotation(hitNormal);
+				impactBurst.Emit(feel.impactParticles);
+			}
+			if (audioRig != null)
+			{
+				audioRig.PlayHit();
+			}
+			if (hitstop != null)
+			{
+				hitstop.Freeze(feel.hitstopMs, feel.hitstopScale);
+			}
 		}
 
 		if (muzzleBurst != null)

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<title>{{{ PRODUCT_NAME }}}</title>
+	<style>
+		html, body { margin: 0; padding: 0; height: 100%; background: #14171c; }
+		body { display: flex; align-items: center; justify-content: center;
+			font-family: -apple-system, Segoe UI, Roboto, sans-serif; color: #c9ced6; }
+		#frame { position: relative; width: 100%; max-width: {{{ WIDTH }}}px; aspect-ratio: {{{ WIDTH }}} / {{{ HEIGHT }}}; }
+		#unity-canvas { width: 100%; height: 100%; display: block; background: #14171c; }
+		#bar { position: absolute; left: 50%; top: 50%; width: 240px; height: 4px;
+			margin: -2px 0 0 -120px; background: #2a2f38; border-radius: 2px; }
+		#fill { width: 0; height: 100%; background: #6fb2a0; border-radius: 2px; }
+		#note { position: absolute; left: 50%; top: calc(50% + 18px); transform: translateX(-50%);
+			font-size: 13px; letter-spacing: .02em; }
+	</style>
+</head>
+<body>
+	<div id="frame">
+		<canvas id="unity-canvas" tabindex="-1"></canvas>
+		<div id="bar"><div id="fill"></div></div>
+		<div id="note">loading, about 10 MB on first visit</div>
+	</div>
+	<script>
+		var canvas = document.querySelector("#unity-canvas");
+		var fill = document.querySelector("#fill");
+		var bar = document.querySelector("#bar");
+		var note = document.querySelector("#note");
+		var config = {
+			arguments: [],
+			dataUrl: "Build/{{{ DATA_FILENAME }}}",
+			frameworkUrl: "Build/{{{ FRAMEWORK_FILENAME }}}",
+			codeUrl: "Build/{{{ CODE_FILENAME }}}",
+			streamingAssetsUrl: "StreamingAssets",
+			companyName: {{{ JSON.stringify(COMPANY_NAME) }}},
+			productName: {{{ JSON.stringify(PRODUCT_NAME) }}},
+			productVersion: {{{ JSON.stringify(PRODUCT_VERSION) }}}
+		};
+		var script = document.createElement("script");
+		script.src = "Build/{{{ LOADER_FILENAME }}}";
+		script.onload = function () {
+			createUnityInstance(canvas, config, function (progress) {
+				fill.style.width = (100 * progress) + "%";
+			}).then(function () {
+				bar.style.display = "none";
+				note.style.display = "none";
+				canvas.focus();
+			}).catch(function (message) {
+				note.textContent = message;
+			});
+		};
+		document.body.appendChild(script);
+	</script>
+</body>
+</html>

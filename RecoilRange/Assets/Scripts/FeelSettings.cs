@@ -33,6 +33,14 @@ public class FeelSettings : MonoBehaviour
 	[Tooltip("Length of the scale punch, in milliseconds.")]
 	public int punchMs = 220;
 
+	[Header("Impact")]
+	[Tooltip("Particles released where the shot lands.")]
+	public int impactParticles = 20;
+	[Tooltip("How long time crawls on a hit, in milliseconds.")]
+	public int hitstopMs = 45;
+	[Tooltip("How slow time runs during that pause, 1 means no slowdown.")]
+	public float hitstopScale = 0.06f;
+
 	[Header("Muzzle")]
 	[Tooltip("Particles released per shot.")]
 	public int muzzleParticles = 24;
